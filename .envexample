@@ -1,0 +1,2 @@
+PORT=[Puerto de la aplicación]
+MONGO_URI=[Cadena de conexión a MongoDB]
