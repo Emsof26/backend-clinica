@@ -1,0 +1,18 @@
+import express, { Router } from "express";
+
+
+import auth from "./auth";
+
+
+const v1: Router = express.Router();
+
+
+// ===============================
+// ROUTES v1
+// ===============================
+
+
+v1.use("/auth", auth);
+
+
+export default v1;

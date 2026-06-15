@@ -43,4 +43,4 @@ const ClinicaSchema = new Schema<IClinica>(
   }
 );
 
-export default model<IClinica>("Clinica", ClinicaSchema);
+export default model<IClinica>("Clinica", ClinicaSchema, "clinica");

@@ -1,20 +1,33 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import routes from "./routes";
+import passport from "./passport";
 import { errorHandler } from "./middlewares/errorHandler";
-
 const app = express();
 
 
-// middlewares
+// Middlewares
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 
-// ruta de prueba
+// Passport
+app.use(passport.initialize());
+
+
+// Routes
+app.use(routes);
+
+
+// Ruta de prueba
 app.get("/", (req, res) => {
-  res.send("API funcionando ");
+  res.send("API funcionando");
 });
 
-app.use(errorHandler);
 
+// Error Handler
+// ⚠️ SIEMPRE AL FINAL
+app.use(errorHandler);
 export default app;
