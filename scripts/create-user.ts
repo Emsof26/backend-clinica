@@ -81,7 +81,6 @@ async function createUser() {
     const answers: any =
       await inquirer.prompt(questions);
 
-    // Verificar email duplicado
     const existe = await Usuario.findOne({
       email: answers.email,
     });
@@ -96,14 +95,14 @@ async function createUser() {
       process.exit(1);
     }
 
-    // Encriptar contraseña
+
     const hashedPassword =
       await bcrypt.hash(
         answers.password,
         10
       );
 
-    // Crear usuario
+
     const usuario =
       await Usuario.create({
         nombres: answers.nombres,

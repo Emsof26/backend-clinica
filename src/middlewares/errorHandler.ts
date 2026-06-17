@@ -9,16 +9,12 @@ export const errorHandler = (
   _next: NextFunction
 ) => {
 
-
-  // 🔐 Ocultar errores en login (opcional pero PRO)
   if (req.originalUrl.includes("/auth/signin")) {
     return res.status(401).json({
       message: "Credenciales incorrectas",
     });
   }
 
-
-  // ⚠️ Errores controlados (ApiError)
   if (err instanceof ApiError) {
     return res.status(err.status).json({
       message: err.message,
@@ -30,8 +26,6 @@ export const errorHandler = (
 
   console.error(err);
 
-
-  // ❌ Error inesperado
   return res.status(500).json({
     message: "Error interno del servidor",
   });

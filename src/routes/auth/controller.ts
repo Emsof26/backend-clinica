@@ -11,12 +11,6 @@ import ApiError from "../../errors/ApiError";
 
 import { env } from "../../config/env";
 
-
-// ===============================
-// LOGIN /auth/signin
-// ===============================
-
-
 export const authUsuario = (
   req: Request,
   res: Response,
@@ -52,20 +46,10 @@ export const authUsuario = (
         }
 
 
-        // ===============================
-        // Payload JWT
-        // ===============================
-
-
         const payload = {
           sub: usuario.id,
           rol: usuario.rol,
         };
-
-
-        // ===============================
-        // Crear JWT
-        // ===============================
 
 
         const token = jwt.sign(
@@ -78,23 +62,12 @@ export const authUsuario = (
         );
 
 
-        // ===============================
-        // Guardar JWT en cookie
-        // ===============================
-
-
         res.cookie("token", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
-          maxAge: 60 * 60 * 1000, // 1 hora
+          maxAge: 60 * 60 * 1000, 
         });
-
-
-        // ===============================
-        // Respuesta final
-        // ===============================
-
 
         return res.status(200).json({
           message: "signin successfully",
@@ -112,11 +85,6 @@ export const authUsuario = (
 
 
 };
-
-
-// ===============================
-// PERFIL /auth/me
-// ===============================
 
 
 export const getMe = [
@@ -170,18 +138,11 @@ export const getMe = [
 ];
 
 
-// ===============================
-// LOGOUT /auth/logout
-// ===============================
-
-
 export const logout = (
   req: Request,
   res: Response,
 ) => {
 
-
-  // eliminar cookie token
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
