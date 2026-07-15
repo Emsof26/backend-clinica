@@ -5,45 +5,65 @@ import UsuarioResource from "../resources/UsuarioResource";
 
 const localStrategy = new Strategy(
   {
-    usernameField: "email",
+    usernameField: "carnet_identidad",
     passwordField: "password",
     session: false,
   },
-  async (email: string, password: string, done) => {
+
+  async (
+    carnet_identidad: string,
+    password: string,
+    done
+  ) => {
+
     try {
+
       const repository = new UsuarioRepository();
 
-      const usuario = await repository.getAuthByEmail(email);
+      const usuario =
+        await repository.getAuthByCarnet(
+          carnet_identidad
+        );
 
       if (!usuario || !usuario.password) {
+
         throw new ApiError({
           name: "UNAUTHORIZED_ERROR",
           message: "Credenciales incorrectas",
           code: "ERR_UNAUTH",
           status: 401,
         });
+
       }
 
-      const match = await repository.comparePassword(
-        password,
-        usuario.password
-      );
+      const match =
+        await repository.comparePassword(
+          password,
+          usuario.password
+        );
 
       if (!match) {
+
         throw new ApiError({
           name: "UNAUTHORIZED_ERROR",
           message: "Credenciales incorrectas",
           code: "ERR_UNAUTH",
           status: 401,
         });
+
       }
 
-      const resource = new UsuarioResource(usuario);
+      const resource =
+        new UsuarioResource(usuario);
 
       return done(null, resource.item());
+
     } catch (error) {
+
       return done(error);
+
     }
+
   }
 );
 

@@ -5,138 +5,103 @@ import chalk from "chalk";
 import bcrypt from "bcrypt";
 
 import { connectDB } from "../src/database/connection";
+import Usuario, { ROLES } from "../src/database/models/usuario";
 
-import Usuario from "../src/database/models/usuario";
-import Clinica from "../src/database/models/clinica";
-
+// ===============================
+// Crear Usuario
+// ===============================
 async function createUser() {
   try {
     // Conectar a MongoDB
     await connectDB();
 
-    console.log(
-      chalk.yellow("=== Crear Usuario ===")
-    );
+    console.log(chalk.yellow("=== Crear Usuario ==="));
 
-    // Buscar la clínica registrada
-    const clinica = await Clinica.findOne();
-
-    if (!clinica) {
-      console.log(
-        chalk.red(
-          "❌ No existe ninguna clínica registrada."
-        )
-      );
-
-      process.exit(1);
-    }
-
-    const questions: any[] = [
+    // ===============================
+    // Preguntas
+    // ===============================
+    const answers = await inquirer.prompt([
       {
         type: "input",
-        name: "nombres",
-        message: "Nombres:",
+        name: "nombre",
+        message: "Nombre:",
       },
       {
         type: "input",
-        name: "apellidos",
-        message: "Apellidos:",
+        name: "apellido_paterno",
+        message: "Apellido paterno:",
       },
       {
         type: "input",
-        name: "email",
-        message: "Correo electrónico:",
+        name: "apellido_materno",
+        message: "Apellido materno:",
       },
       {
         type: "input",
-        name: "telefono",
-        message: "Teléfono:",
+        name: "carnet_identidad",
+        message: "Carnet de identidad:",
       },
       {
         type: "password",
         name: "password",
         message: "Contraseña:",
+        mask: "*",
       },
       {
-        type: "select",
+        type: "list",
         name: "rol",
         message: "Rol:",
-        choices: [
-            {
-            name: "Administrador",
-            value: "Administrador",
-            },
-            {
-            name: "Doctor",
-            value: "Doctor",
-            },
-            {
-            name: "Recepcionista",
-            value: "Recepcionista",
-            },
-        ],
+        choices: [...ROLES],
       },
-    ];
+    ]);
 
-    const answers: any =
-      await inquirer.prompt(questions);
-
+    // ===============================
+    // Verificar duplicado
+    // ===============================
     const existe = await Usuario.findOne({
-      email: answers.email,
+      carnet_identidad: answers.carnet_identidad,
     });
 
     if (existe) {
       console.log(
-        chalk.red(
-          "❌ Ya existe un usuario con ese email"
-        )
+        chalk.red("❌ Ya existe un usuario con ese carnet de identidad.")
       );
-
       process.exit(1);
     }
 
+    // ===============================
+    // Encriptar contraseña
+    // ===============================
+    const hashedPassword = await bcrypt.hash(
+      answers.password,
+      10
+    );
 
-    const hashedPassword =
-      await bcrypt.hash(
-        answers.password,
-        10
-      );
-
-
-    const usuario =
-      await Usuario.create({
-        nombres: answers.nombres,
-        apellidos: answers.apellidos,
-        email: answers.email,
-        telefono: answers.telefono,
-        password: hashedPassword,
-
-        rol: answers.rol,
-
-        activo: true,
-
-        clinica: clinica._id,
-      });
+    // ===============================
+    // Crear usuario
+    // ===============================
+    const usuario = await Usuario.create({
+      nombre: answers.nombre,
+      apellido_paterno: answers.apellido_paterno,
+      apellido_materno: answers.apellido_materno,
+      carnet_identidad: answers.carnet_identidad,
+      rol: answers.rol,
+      password: hashedPassword,
+    });
 
     console.log(
-      chalk.green(
-        `✅ Usuario creado: ${usuario.nombres} ${usuario.apellidos}`
-      )
+      chalk.green(`✅ Usuario creado correctamente: ${usuario.nombre}`)
     );
 
     process.exit(0);
 
   } catch (error) {
-
     console.error(
-      chalk.red(
-        "❌ Error creando usuario"
-      ),
+      chalk.red("❌ Error creando usuario"),
       error
     );
 
     process.exit(1);
-
   }
 }
 

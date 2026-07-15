@@ -1,68 +1,48 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface IUsuario extends Document {
-  nombres: string;
-  apellidos: string;
-  email: string;
-  password: string;
-  telefono?: string;
-  rol: "Administrador" | "Doctor" | "Recepcionista";
-  activo: boolean;
-  clinica: Types.ObjectId;
-  fechaRegistro: Date;
-}
+export const ROLES = [
+  "ADMINISTRADOR",
+  "DOCTOR"
+] as const;
 
-const UsuarioSchema = new Schema<IUsuario>(
+const UsuarioSchema = new Schema(
   {
-    nombres: {
+    nombre: {
       type: String,
       required: true,
       trim: true,
     },
 
-    apellidos: {
+    apellido_paterno: {
       type: String,
       required: true,
       trim: true,
     },
 
-    email: {
+    apellido_materno: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    carnet_identidad: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
       trim: true,
+    },
+
+    rol: {
+      type: String,
+      enum: ROLES,
+      required: true,
+      default: "DOCTOR",
     },
 
     password: {
       type: String,
       required: true,
-    },
-
-    telefono: {
-      type: String,
-    },
-
-    rol: {
-      type: String,
-      enum: ["Administrador", "Doctor", "Recepcionista"],
-      default: "Recepcionista",
-    },
-
-    activo: {
-      type: Boolean,
-      default: true,
-    },
-
-    clinica: {
-      type: Schema.Types.ObjectId,
-      ref: "Clinica",
-      required: true,
-    },
-
-    fechaRegistro: {
-      type: Date,
-      default: Date.now,
+      select: false,
     },
   },
   {
@@ -71,4 +51,4 @@ const UsuarioSchema = new Schema<IUsuario>(
   }
 );
 
-export default model<IUsuario>("Usuario", UsuarioSchema);
+export default model("Usuario", UsuarioSchema);

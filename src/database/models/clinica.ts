@@ -1,16 +1,8 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface IClinica extends Document {
-  nombre: string;
-  direccion: string;
-  telefono: string;
-  email: string;
-  activo: boolean;
-}
-
-const ClinicaSchema = new Schema<IClinica>(
+const ClinicaSchema = new Schema(
   {
-    nombre: {
+    nombre_clinica: {
       type: String,
       required: true,
       trim: true,
@@ -19,22 +11,19 @@ const ClinicaSchema = new Schema<IClinica>(
     direccion: {
       type: String,
       required: true,
+      trim: true,
     },
 
     telefono: {
       type: String,
       required: true,
+      trim: true,
     },
 
-    email: {
+    horarios: {
       type: String,
       required: true,
-      lowercase: true,
-    },
-
-    activo: {
-      type: Boolean,
-      default: true,
+      trim: true,
     },
   },
   {
@@ -43,4 +32,4 @@ const ClinicaSchema = new Schema<IClinica>(
   }
 );
 
-export default model<IClinica>("Clinica", ClinicaSchema, "clinica");
+export default model("Clinica", ClinicaSchema);
