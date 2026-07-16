@@ -1,46 +1,90 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 
-export interface IPaciente extends Document {
-  nombres: string;
-  apellidos: string;
-  fechaNacimiento: Date;
-  sexo: string;
-  telefono: string;
-  direccion: string;
-  clinica: Types.ObjectId;
-}
+// ===============================
+// Grupos etarios permitidos
+// ===============================
+export const GRUPOS_ETARIOS = [
+  "neonato",
+  "lactante",
+  "infancia",
+  "adolescencia",
+  "adultez",
+  "adulto_mayor",
+] as const;
 
-const PacienteSchema = new Schema<IPaciente>(
+// ===============================
+// Estados clínicos permitidos
+// ===============================
+export const ESTADOS_CLINICOS = [
+  "normal",
+  "seguimiento",
+  "alerta",
+] as const;
+
+// ===============================
+// Esquema de Paciente
+// ===============================
+const PacienteSchema = new Schema(
   {
-    nombres: {
+    nombre: {
       type: String,
       required: true,
       trim: true,
     },
 
-    apellidos: {
+    apellido_paterno: {
       type: String,
       required: true,
       trim: true,
     },
 
-    fechaNacimiento: {
+    apellido_materno: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    carnet_identidad: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+
+    fecha_nacimiento: {
       type: Date,
       required: true,
     },
 
     sexo: {
       type: String,
-      enum: ["Masculino", "Femenino"],
+      required: true,
+      trim: true,
+    },
+
+    correo: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
+
+    grupo_etario: {
+      type: String,
+      enum: GRUPOS_ETARIOS,
       required: true,
     },
 
-    telefono: {
+    estado_clinico: {
       type: String,
+      enum: ESTADOS_CLINICOS,
+      required: true,
+      default: "normal",
     },
 
-    direccion: {
-      type: String,
+    fecha_registro: {
+      type: Date,
+      default: Date.now,
     },
 
     clinica: {
@@ -50,12 +94,8 @@ const PacienteSchema = new Schema<IPaciente>(
     },
   },
   {
-    timestamps: true,
     versionKey: false,
   }
 );
 
-export default model<IPaciente>(
-  "Paciente",
-  PacienteSchema
-);
+export default model("Paciente", PacienteSchema);
